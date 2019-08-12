@@ -28,7 +28,7 @@ login_user(None, "secret123")
 
 results in:
 
-<img src=demo.png width=576 />
+<img src=demo.png width=533 />
 
 ## How does it work?
 
