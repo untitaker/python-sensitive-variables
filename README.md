@@ -1,6 +1,7 @@
 # sensitive_variables - strip local variables in tracebacks
 
 [![Build Status](https://travis-ci.com/untitaker/python-sensitive-variables.svg?token=KCykhJnWfRnhkGxeQkqY&branch=master)](https://travis-ci.com/untitaker/python-sensitive-variables)
+[![PyPi page link -- version](https://img.shields.io/pypi/v/sensitive-variables.svg)](https://pypi.python.org/pypi/sensitive-variables)
 
 `sensitive_variables` is a decorator you can apply to your functions to
 prevent certain local variables from being read by debugging tools, such as the
