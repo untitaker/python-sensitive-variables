@@ -1,0 +1,6 @@
+include LICENSE
+include README.rst
+
+recursive-include tests *
+
+global-exclude *.py[cdo] __pycache__ *.so *.pyd

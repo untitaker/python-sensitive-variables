@@ -1,11 +1,4 @@
-import sys
-
-from sensitive_variables import PLACEHOLDER, sensitive_variables, _iter_stacks
-
-
-def get_all_variables():
-    for x in _iter_stacks(sys.exc_info()[-1]):
-        yield x.f_locals
+from sensitive_variables import PLACEHOLDER, sensitive_variables, get_all_variables
 
 
 def test_basic():

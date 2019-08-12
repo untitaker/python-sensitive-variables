@@ -18,10 +18,19 @@ def lint(session):
 
     session.run("black", "--check", ".")
     session.run("flake8")
-    session.run("mypy", "tests", "sensitive_variables.py")
+    session.run("mypy", "tests", "sensitive_variables")
 
 
 @session(python=["3"])
 def format(session):
     session.install("black")
     session.run("black", ".")
+
+
+@session(python=["3"])
+def release(session):
+    session.install("twine")
+
+    session.run("rm", "-rf", "dist/")
+    session.run("python", "setup.py", "sdist", "bdist_wheel")
+    session.run("twine", "upload", "dist/*")
