@@ -11,7 +11,7 @@ def get_all_variables():
 def test_basic():
     is_test_func = True  # noqa
 
-    @sensitive_variables(["password"])
+    @sensitive_variables("password")
     def login_user(username, password):
         is_inside_func = True  # noqa
         print("logging in " + username + password)

@@ -23,10 +23,10 @@ elif platform.python_implementation() == "CPython":
 PLACEHOLDER = "<removed sensitive variable>"
 
 
-def sensitive_variables(names):
+def sensitive_variables(*variables, **config):
     def decorator(f):
         @wraps(f)
-        def wrapper(*args, **kwargs):
+        def sensitive_variables_wrapper(*args, **kwargs):
             __tracebackhide__ = True  # noqa
             __traceback_hide__ = True  # noqa
             try:
@@ -35,15 +35,20 @@ def sensitive_variables(names):
                 exc, value, tb = sys.exc_info()
                 del args
                 del kwargs
-                _scrub_locals_from_traceback(tb, names)
+                _scrub_locals_from_traceback(tb, variables, **config)
                 raise
 
-        return wrapper
+        if variables:
+            sensitive_variables_wrapper.sensitive_variables = variables
+        else:
+            sensitive_variables_wrapper.sensitive_variables = "__ALL__"
+
+        return sensitive_variables_wrapper
 
     return decorator
 
 
-def _scrub_locals_from_traceback(traceback, names):
+def _scrub_locals_from_traceback(traceback, names, depth=1):
     for frame in _iter_stacks(traceback):
         locals = frame.f_locals
 
@@ -52,10 +57,14 @@ def _scrub_locals_from_traceback(traceback, names):
 
         locals_modified = False
 
-        for name in names:
-            if name in locals:
-                locals[name] = PLACEHOLDER
-                locals_modified = True
+        if names:
+            for name in names:
+                if name in locals:
+                    locals[name] = PLACEHOLDER
+                    locals_modified = True
+        else:
+            locals.clear()
+            locals_modified = True
 
         if locals_modified:
             locals_to_fast(frame)
