@@ -28,7 +28,7 @@ login_user(None, "secret123")
 
 results in:
 
-<img src=demo.png width=533 />
+<img src=demo.png width=533 alt="Picture of Sentry's traceback view where each frame contains local variables. The password variable contains a placeholder instead of the actual value." />
 
 ## How does it work?
 
