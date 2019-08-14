@@ -48,7 +48,11 @@ This decorator will always work because it actually modifies your locals.
 
 * This decorator does not couple your configuration for what is sensitive data to a specific crash reporting tool.
 
-* Datascrubbing is easily unit-testable (see `tests/` folder).
+* Behavior of the decorator is easily unit-testable (see `tests/` folder).
+
+## Why would I not use this?
+
+This decorator inherently requires custom code for each Python implementation. Currently this is only tested against CPython 2.7, CPython 3.7 and PyPy 2.7.
 
 ## License
 
