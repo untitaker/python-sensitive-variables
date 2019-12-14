@@ -38,11 +38,11 @@ This is usually not problematic because a function that just threw an exception 
 
 ## Why would I use this over Django's decorator?
 
-Django has a decorator also called `sensitive_variables`, which this package is inspired by. It adds an attribute to the function that contains the variable names.
+Django has a decorator also called `sensitive_variables`, which this package is inspired by. It sets an attribute on the function object that contains the variable names.
 
 Debugging tools have to know about this attribute and respect it. For anything outside of the Django world, this is unlikely to be the case.
 
-This decorator will always work because it actually modifies your locals.
+The decorator in this package will always work because it actually modifies your locals.
 
 ## Why would I use this over Sentry's datascrubbing options?
 

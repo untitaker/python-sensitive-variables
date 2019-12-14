@@ -19,3 +19,4 @@ __pycache__
 .nox
 .mypy_cache
 *.egg-info
+lol*
