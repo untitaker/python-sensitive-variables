@@ -57,6 +57,7 @@ def sensitive_variables(*variables, **config):
                 del args
                 del kwargs
                 _scrub_locals_from_traceback(tb, variables, **config)
+                del exc, value, tb
                 raise
 
         return sensitive_variables_wrapper  # type: ignore
