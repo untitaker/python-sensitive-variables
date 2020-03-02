@@ -1,6 +1,6 @@
 import gc
 
-import pytest
+import pytest  # type: ignore
 
 from sensitive_variables import PLACEHOLDER, sensitive_variables, get_all_variables
 
