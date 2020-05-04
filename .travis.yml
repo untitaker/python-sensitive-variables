@@ -1,8 +1,18 @@
 language: python
-python: 3.7
-dist: xenial
+python:
+  - "3.7"
+dist: bionic
+
+before_install:
+  - pyenv install -s 2.7
+  - pyenv install -s 3.8
+  - pyenv local 2.7 3.7 3.8
+  - python2.7 --version
+  - python3.7 --version
+  - python3.8 --version
 
 install:
+  - pip install setuptools
   - pip install nox
 
 script:

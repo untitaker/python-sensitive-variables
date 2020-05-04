@@ -52,7 +52,7 @@ The decorator in this package will always work because it actually modifies your
 
 ## Why would I not use this?
 
-This decorator inherently requires custom code for each Python implementation. Currently this is only tested against CPython 2.7, CPython 3.7 and PyPy 2.7.
+This decorator inherently requires custom code for each Python implementation. Currently this is only tested against CPython 2.7, CPython 3.7, CPython 3.8 and PyPy 2.7.
 
 ## License
 
