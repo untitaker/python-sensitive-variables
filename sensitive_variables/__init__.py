@@ -71,8 +71,8 @@ def get_all_variables():
         yield x.f_locals
 
 
-def _scrub_locals_from_traceback(traceback, names, depth=1):
-    # type: (Optional[TracebackType], Tuple[str, ...], int) -> None
+def _scrub_locals_from_traceback(traceback, names, depth=1, custom_scrub_fn=None):
+    # type: (Optional[TracebackType], Tuple[str, ...], int, Optional[Callable[[Any, str], Tuple[bool, Any]]]) -> None
     for frame in _iter_stacks(traceback):
         if frame.f_globals.get("__name__") == __name__:
             continue
@@ -88,6 +88,14 @@ def _scrub_locals_from_traceback(traceback, names, depth=1):
             continue
 
         locals_modified = False
+
+        if custom_scrub_fn:
+            for local_key in locals:
+                obj = locals[local_key]
+                local_locals_modified, locals[local_key] = custom_scrub_fn(
+                    obj, local_key
+                )
+                locals_modified = locals_modified or local_locals_modified
 
         if names:
             for name in names:

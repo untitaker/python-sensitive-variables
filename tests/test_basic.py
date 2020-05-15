@@ -1,5 +1,10 @@
 import gc
 
+try:
+    from collections import UserDict  # type: ignore
+except ImportError:
+    from UserDict import UserDict  # type: ignore
+
 import pytest  # type: ignore
 
 from sensitive_variables import PLACEHOLDER, sensitive_variables, get_all_variables
@@ -83,5 +88,82 @@ def test_basic_depth_2(no_cyclic_references):
         # Assert real functionality
         assert locals["password"] == PLACEHOLDER
         assert "secret123" not in list(locals.values())
+
+    no_cyclic_references(f)
+
+
+def test_basic_custom_scrub_fn_reference(no_cyclic_references):
+    def scrub_dict(local_value, variable_name):
+        if isinstance(local_value, dict):
+            local_value.pop("field_special", None)
+            return True, local_value
+        return False, local_value
+
+    def f():
+        is_test_func = True  # noqa
+
+        @sensitive_variables("password", custom_scrub_fn=scrub_dict)
+        def login_user(username, password):
+            is_inside_func = True  # noqa
+            test_dict = {"field_special": "secret123", "normal": "not secret"}  # noqa
+            test_user_dict = UserDict(  # noqa
+                {"field_special": "secret123", "normal": "not secret"}
+            )
+            print("logging in " + username + password)
+
+        try:
+            login_user(None, "secret123")
+        except TypeError:
+            test_locals, wrapper_locals, locals = get_all_variables()
+        else:
+            assert False
+
+        # Assert that we got the right frames
+        assert test_locals["is_test_func"]
+        assert locals["is_inside_func"]
+        assert wrapper_locals["f"]
+
+        # Assert real functionality
+        assert locals["password"] == PLACEHOLDER
+        assert "secret123" not in list(locals.values())
+        assert locals["test_dict"] == {"normal": "not secret"}
+        assert locals["test_user_dict"] == UserDict(
+            {"field_special": "secret123", "normal": "not secret"}
+        )
+
+    no_cyclic_references(f)
+
+
+def test_basic_custom_scrub_fn_int(no_cyclic_references):
+    def scrub_var(local_value, variable_name):
+        if variable_name == "to_scrub":
+            return True, PLACEHOLDER
+        return False, local_value
+
+    def f():
+        is_test_func = True  # noqa
+
+        @sensitive_variables("password", custom_scrub_fn=scrub_var)
+        def login_user(username, password):
+            is_inside_func = True  # noqa
+            to_scrub = "secret123"  # noqa
+            print("logging in " + username + password)
+
+        try:
+            login_user(None, "secret123")
+        except TypeError:
+            test_locals, wrapper_locals, locals = get_all_variables()
+        else:
+            assert False
+
+        # Assert that we got the right frames
+        assert test_locals["is_test_func"]
+        assert locals["is_inside_func"]
+        assert wrapper_locals["f"]
+
+        # Assert real functionality
+        assert locals["password"] == PLACEHOLDER
+        assert "secret123" not in list(locals.values())
+        assert locals["to_scrub"] == PLACEHOLDER
 
     no_cyclic_references(f)

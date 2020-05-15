@@ -11,6 +11,10 @@ Unlike Django's `sensitive_variables` it is independent of the web framework
 you use and also does not rely on debugging tools to know about the decorator
 for things to work.
 
+## Usage:
+
+### Basic
+
 ```python
 from sentry_sdk import init
 
@@ -30,9 +34,39 @@ results in:
 
 <img src=https://raw.githubusercontent.com/untitaker/python-sensitive-variables/master/demo.png width=533 alt="Picture of Sentry's traceback view where each frame contains local variables. The password variable contains a placeholder instead of the actual value." />
 
+### Custom scrub function
+
+`sensitive_varibles` can receive a custom_scrub_fn parameter which will ba called for each local variable.
+It receives the local value and variable name and must return `value_has_changed, new_value`.
+Where value_has_changed is a boolean which represents the value being changed or not and new_value is the new value.
+
+You can use this to extend scrub for dictionaries and any other custom type.
+
+Example:
+```python
+from sentry_sdk import init
+
+from sensitive_variables import sensitive_variables
+
+init()
+
+def my_scrub_fn(value, variable_name):
+    if variable_name == 'password':
+        return True, 'scrubbed-value'
+    return False, value
+
+
+@sensitive_variables(custom_scrub_fn=my_scrub_fn)
+def login_user(username, password):
+    print("Logging in " + username + " with " + password)
+
+# TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'
+login_user(None, "secret123")
+```
+
 ## How does it work?
 
-When the decorated function throws an exception, `sensitive_variables` walks through the traceback, removes sensitive data from `frame.f_locals` and reraises the exception.
+When the decorated function throws an exception, `sensitive_variables` walks through the traceback, removes sensitive data from `frame.f_locals` calling custom_scrub_fn so custom processing can be made and reraises the exception.
 
 This is usually not problematic because a function that just threw an exception is unlikely to still use its local variables.
 
