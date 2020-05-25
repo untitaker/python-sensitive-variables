@@ -7,10 +7,12 @@ before_install:
   - (cd $(pyenv root) && git fetch && git checkout -f origin/master)
   - pyenv install --list
   - pyenv install -s 2.7
+  - pyenv install -s 3.6
   - pyenv install -s 3.8
   - pyenv install -s pypy2.7-7.3.0
-  - pyenv local 2.7 3.7 3.8 pypy2.7-7.3.0
+  - pyenv local 2.7 3.6 3.7 3.8 pypy2.7-7.3.0
   - python2.7 --version
+  - python3.6 --version
   - python3.7 --version
   - python3.8 --version
   - pypy --version
