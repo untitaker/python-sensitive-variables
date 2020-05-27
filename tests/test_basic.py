@@ -59,6 +59,37 @@ def test_basic(no_cyclic_references):
     no_cyclic_references(f)
 
 
+def test_basic_no_arguments(no_cyclic_references):
+    def f():
+        is_test_func = True  # noqa
+
+        # This should clean everything!
+        @sensitive_variables()
+        def login_user(username, password):
+            is_inside_func = True  # noqa
+            to_clean = {"dict": "a"}  # noqa
+            print("logging in " + username + password)
+
+        try:
+            login_user(None, "secret123")
+        except TypeError:
+            test_locals, wrapper_locals, locals = get_all_variables()
+        else:
+            assert False
+
+        # Assert that we got the right frames
+        assert test_locals["is_test_func"]
+        assert locals["is_inside_func"]
+        assert wrapper_locals["f"]
+
+        # Assert real functionality
+        assert locals["password"] == PLACEHOLDER
+        assert "secret123" not in list(locals.values())
+        assert locals["to_clean"] == PLACEHOLDER
+
+    no_cyclic_references(f)
+
+
 def test_basic_depth_2(no_cyclic_references):
     def f():
         is_test_func = True  # noqa
