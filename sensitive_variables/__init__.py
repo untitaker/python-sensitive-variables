@@ -29,7 +29,7 @@ elif platform.python_implementation() == "CPython":
         ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
 
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 
 PLACEHOLDER = "<removed sensitive variable>"
