@@ -66,7 +66,7 @@ login_user(None, "secret123")
 
 ## How does it work?
 
-When the decorated function throws an exception, `sensitive_variables` walks through the traceback, removes sensitive data from `frame.f_locals` calling custom_scrub_fn so custom processing can be made and reraises the exception.
+When the decorated function throws an exception, `sensitive_variables` walks through the traceback and removes sensitive data from `frame.f_locals`.
 
 This is usually not problematic because a function that just threw an exception is unlikely to still use its local variables.
 
